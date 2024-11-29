@@ -64,14 +64,6 @@
             0% { transform: scale(1); opacity: 1; }
             100% { transform: scale(1.5); opacity: 0; }
         }
-        #toolbar {
-            position: fixed;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-        }
         #scoreboard {
             position: fixed;
             top: 10px;
@@ -82,34 +74,17 @@
             border-radius: 10px;
             font-size: 16px;
         }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .active {
-            background-color: orange;
-            color: white;
-        }
     </style>
 </head>
 <body>
-    <div id="toolbar">
-        <button id="bubbleMode" class="active">Pop Bubbles</button>
-        <button id="fireMode">Extinguish Fires</button>
-    </div>
     <div id="scoreboard">
         White Bubbles: <span id="whiteScore">0</span><br>
         Fire Bubbles: <span id="fireScore">0</span>
     </div>
 
     <script>
-        const mode = { action: 'bubble' }; // Default mode
         let whiteScore = 0;
         let fireScore = 0;
-        let hoveredFire = null;
 
         // Add random elements (bubbles and fires) to the page
         function createElements() {
@@ -127,16 +102,6 @@
                 fire.style.top = `${Math.random() * window.innerHeight}px`;
                 fire.style.left = `${Math.random() * window.innerWidth}px`;
                 document.body.appendChild(fire);
-
-                fire.addEventListener('mouseenter', () => {
-                    hoveredFire = fire;
-                });
-
-                fire.addEventListener('mouseleave', () => {
-                    if (hoveredFire === fire) {
-                        hoveredFire = null;
-                    }
-                });
             }
         }
 
@@ -146,14 +111,14 @@
         document.body.addEventListener('click', (e) => {
             const target = e.target;
 
-            if (mode.action === 'bubble' && target.classList.contains('bubble')) {
+            if (target.classList.contains('bubble')) {
                 target.style.animation = 'dissipate 0.5s forwards';
                 setTimeout(() => target.remove(), 500);
                 whiteScore++;
                 document.getElementById('whiteScore').textContent = whiteScore;
             }
 
-            if (mode.action === 'fire' && target.classList.contains('fire')) {
+            if (target.classList.contains('fire')) {
                 popFireBubble(target);
             }
         });
@@ -170,27 +135,6 @@
             document.getElementById('fireScore').textContent = fireScore;
             setTimeout(() => flames.remove(), 1000);
         }
-
-        // Handle space bar to pop hovered fire bubbles
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space' && hoveredFire && mode.action === 'fire') {
-                popFireBubble(hoveredFire);
-                hoveredFire = null;
-            }
-        });
-
-        // Toolbar button handlers
-        document.getElementById('bubbleMode').addEventListener('click', () => {
-            mode.action = 'bubble';
-            document.getElementById('bubbleMode').classList.add('active');
-            document.getElementById('fireMode').classList.remove('active');
-        });
-
-        document.getElementById('fireMode').addEventListener('click', () => {
-            mode.action = 'fire';
-            document.getElementById('fireMode').classList.add('active');
-            document.getElementById('bubbleMode').classList.remove('active');
-        });
     </script>
 </body>
 </html>
