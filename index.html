@@ -1,29 +1,196 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stickman's Emotional Expressions!</title>
-  <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Bubbles and Fires</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: cyan;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+        }
+        .bubble, .fire {
+            position: absolute;
+            border-radius: 50%;
+            cursor: pointer;
+            user-select: none;
+        }
+        .bubble {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            animation: float 5s infinite ease-in-out;
+        }
+        .fire {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, red, orange, yellow);
+            animation: flicker 0.5s infinite;
+        }
+        .smoke {
+            width: 60px;
+            height: 60px;
+            background: rgba(200, 200, 200, 0.8);
+            border-radius: 50%;
+            animation: dissipate 1s forwards;
+        }
+        .flames {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, red, orange, yellow, rgba(255, 69, 0, 0.5));
+            border-radius: 50%;
+            animation: burn 1s forwards;
+            opacity: 0.9;
+            position: absolute;
+        }
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-50px); }
+            100% { transform: translateY(0); }
+        }
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        @keyframes dissipate {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.5); }
+        }
+        @keyframes burn {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        #toolbar {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+        #scoreboard {
+            position: fixed;
+            top: 10px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .active {
+            background-color: orange;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="box">
-      <h2> Select a button to change the emotional state of the Stickman</h2>
-      <div class="buttons">
-        <button class="image-btn" data-image="imgs/angry.JPG">Angry</button>
-        <button class="image-btn" data-image="imgs/happy.JPG">Happy</button>
-        <button class="image-btn" data-image="imgs/love.JPG">Love</button>
-        <button class="image-btn" data-image="imgs/sad.JPG">Sad</button>
-        <button class="image-btn" data-image="imgs/surprised.JPG">Surprised</button>
-      </div>
-      <div class="image-container">
-        <img id="displayed-image" src="imgs/angry.JPG" alt="imgs/angry.JPG" />
-      </div>
+    <div id="toolbar">
+        <button id="bubbleMode" class="active">Pop Bubbles</button>
+        <button id="fireMode">Extinguish Fires</button>
     </div>
-  </div>
+    <div id="scoreboard">
+        White Bubbles: <span id="whiteScore">0</span><br>
+        Fire Bubbles: <span id="fireScore">0</span>
+    </div>
 
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>   
-  <script src="js/scripts.js"></script>
+    <script>
+        const mode = { action: 'bubble' }; // Default mode
+        let whiteScore = 0;
+        let fireScore = 0;
+        let hoveredFire = null;
+
+        // Add random elements (bubbles and fires) to the page
+        function createElements() {
+            for (let i = 0; i < 15; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                bubble.style.top = `${Math.random() * window.innerHeight}px`;
+                bubble.style.left = `${Math.random() * window.innerWidth}px`;
+                document.body.appendChild(bubble);
+            }
+
+            for (let i = 0; i < 10; i++) {
+                const fire = document.createElement('div');
+                fire.classList.add('fire');
+                fire.style.top = `${Math.random() * window.innerHeight}px`;
+                fire.style.left = `${Math.random() * window.innerWidth}px`;
+                document.body.appendChild(fire);
+
+                fire.addEventListener('mouseenter', () => {
+                    hoveredFire = fire;
+                });
+
+                fire.addEventListener('mouseleave', () => {
+                    if (hoveredFire === fire) {
+                        hoveredFire = null;
+                    }
+                });
+            }
+        }
+
+        createElements();
+
+        // Handle clicks on bubbles and fires
+        document.body.addEventListener('click', (e) => {
+            const target = e.target;
+
+            if (mode.action === 'bubble' && target.classList.contains('bubble')) {
+                target.style.animation = 'dissipate 0.5s forwards';
+                setTimeout(() => target.remove(), 500);
+                whiteScore++;
+                document.getElementById('whiteScore').textContent = whiteScore;
+            }
+
+            if (mode.action === 'fire' && target.classList.contains('fire')) {
+                popFireBubble(target);
+            }
+        });
+
+        // Pop fire bubble logic
+        function popFireBubble(fireElement) {
+            const flames = document.createElement('div');
+            flames.classList.add('flames');
+            flames.style.top = `${fireElement.offsetTop}px`;
+            flames.style.left = `${fireElement.offsetLeft}px`;
+            document.body.appendChild(flames);
+            fireElement.remove();
+            fireScore++;
+            document.getElementById('fireScore').textContent = fireScore;
+            setTimeout(() => flames.remove(), 1000);
+        }
+
+        // Handle space bar to pop hovered fire bubbles
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && hoveredFire && mode.action === 'fire') {
+                popFireBubble(hoveredFire);
+                hoveredFire = null;
+            }
+        });
+
+        // Toolbar button handlers
+        document.getElementById('bubbleMode').addEventListener('click', () => {
+            mode.action = 'bubble';
+            document.getElementById('bubbleMode').classList.add('active');
+            document.getElementById('fireMode').classList.remove('active');
+        });
+
+        document.getElementById('fireMode').addEventListener('click', () => {
+            mode.action = 'fire';
+            document.getElementById('fireMode').classList.add('active');
+            document.getElementById('bubbleMode').classList.remove('active');
+        });
+    </script>
 </body>
 </html>
