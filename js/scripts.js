@@ -1,11 +1,90 @@
-const mode = { action: 'bubble' }; // Default mode
-let whiteScore = 0;
-let fireScore = 0;
-let hoveredFire = null;
+let bubbleScore = 0;
+let timerInterval;
+let startTime;
 
-// Add random elements (bubbles and fires) to the page
-function createElements() {
-    for (let i = 0; i < 15; i++) {
+const menu = document.getElementById('menu');
+const playButton = document.getElementById('playButton');
+const howToPlayButton = document.getElementById('howToPlayButton');
+const instructions = document.getElementById('instructions');
+const scoreboard = document.getElementById('scoreboard');
+const countdown = document.getElementById('countdown');
+
+playButton.addEventListener('click', () => {
+    menu.style.display = 'none';
+    startCountdown();
+});
+
+howToPlayButton.addEventListener('click', () => {
+    instructions.style.display = instructions.style.display === 'none' ? 'block' : 'none';
+});
+
+function startCountdown() {
+    let count = 3;
+    countdown.style.display = 'block';
+    countdown.textContent = count;
+
+    const countdownInterval = setInterval(() => {
+        count--;
+        countdown.textContent = count;
+        if (count === 0) {
+            clearInterval(countdownInterval);
+            countdown.style.display = 'none';
+            startGame();
+        }
+    }, 1000);
+}
+
+function startGame() {
+    bubbleScore = 0;
+    document.getElementById('bubbleScore').textContent = bubbleScore;
+    scoreboard.style.display = 'block';
+    createBubbles();
+    startTime = Date.now();
+
+    let timeLeft = 30;
+    document.getElementById('timer').textContent = timeLeft;
+
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+            endGame();
+        }
+    }, 1000);
+}
+
+function endGame() {
+    clearInterval(timerInterval);
+    scoreboard.style.display = 'none';
+    const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+
+    let trophy;
+    if (bubbleScore === 20) {
+        if (timeTaken <= 15) {
+            trophy = 'Gold';
+        } else if (timeTaken <= 25) {
+            trophy = 'Silver';
+        } else if (timeTaken <= 30) {
+            trophy = 'Bronze';
+        }
+    }
+
+    const message = trophy
+        ? `Congratulations! You won a ${trophy} trophy by popping all bubbles in ${timeTaken} seconds!`
+        : `Game over! You popped ${bubbleScore} bubbles.`;
+
+    alert(message);
+    resetGame();
+}
+
+function resetGame() {
+    document.querySelectorAll('.bubble, .fire').forEach(element => element.remove());
+    menu.style.display = 'block';
+}
+
+function createBubbles() {
+    for (let i = 0; i < 20; i++) {
         const bubble = document.createElement('div');
         bubble.classList.add('bubble');
         bubble.style.top = `${Math.random() * window.innerHeight}px`;
@@ -13,73 +92,16 @@ function createElements() {
         document.body.appendChild(bubble);
     }
 
-    for (let i = 0; i < 10; i++) {
-        const fire = document.createElement('div');
-        fire.classList.add('fire');
-        fire.style.top = `${Math.random() * window.innerHeight}px`;
-        fire.style.left = `${Math.random() * window.innerWidth}px`;
-        document.body.appendChild(fire);
+    document.body.addEventListener('click', (e) => {
+        if (e.target.classList.contains('bubble')) {
+            e.target.remove();
+            bubbleScore++;
+            document.getElementById('bubbleScore').textContent = bubbleScore;
 
-        fire.addEventListener('mouseenter', () => {
-            hoveredFire = fire;
-        });
-
-        fire.addEventListener('mouseleave', () => {
-            if (hoveredFire === fire) {
-                hoveredFire = null;
+            // End game if all bubbles are popped early
+            if (bubbleScore === 20) {
+                endGame();
             }
-        });
-    }
+        }
+    });
 }
-
-createElements();
-
-// Handle clicks on bubbles and fires
-document.body.addEventListener('click', (e) => {
-    const target = e.target;
-
-    if (mode.action === 'bubble' && target.classList.contains('bubble')) {
-        target.style.animation = 'dissipate 0.5s forwards';
-        setTimeout(() => target.remove(), 500);
-        whiteScore++;
-        document.getElementById('whiteScore').textContent = whiteScore;
-    }
-
-    if (mode.action === 'fire' && target.classList.contains('fire')) {
-        popFireBubble(target);
-    }
-});
-
-// Pop fire bubble logic
-function popFireBubble(fireElement) {
-    const flames = document.createElement('div');
-    flames.classList.add('flames');
-    flames.style.top = `${fireElement.offsetTop}px`;
-    flames.style.left = `${fireElement.offsetLeft}px`;
-    document.body.appendChild(flames);
-    fireElement.remove();
-    fireScore++;
-    document.getElementById('fireScore').textContent = fireScore;
-    setTimeout(() => flames.remove(), 1000);
-}
-
-// Handle space bar to pop hovered fire bubbles
-document.addEventListener('keydown', (e) => {
-    if (e.code === 'Space' && hoveredFire && mode.action === 'fire') {
-        popFireBubble(hoveredFire);
-        hoveredFire = null;
-    }
-});
-
-// Toolbar button handlers
-document.getElementById('bubbleMode').addEventListener('click', () => {
-    mode.action = 'bubble';
-    document.getElementById('bubbleMode').classList.add('active');
-    document.getElementById('fireMode').classList.remove('active');
-});
-
-document.getElementById('fireMode').addEventListener('click', () => {
-    mode.action = 'fire';
-    document.getElementById('fireMode').classList.add('active');
-    document.getElementById('bubbleMode').classList.remove('active');
-});
