@@ -1,6 +1,6 @@
 let bubbleScore = 0;
-let timerInterval;
-let startTime;
+let timerInterval = 0;
+let startTime = 0;
 
 const menu = document.getElementById('menu');
 const playButton = document.getElementById('playButton');
@@ -35,7 +35,7 @@ function startCountdown() {
 }
 
 function startGame() {
-    bubbleScore = 0;
+    bubbleScore = 0; // Reset score
     document.getElementById('bubbleScore').textContent = bubbleScore;
     scoreboard.style.display = 'block';
     createBubbles();
@@ -81,7 +81,22 @@ function endGame() {
 function resetGame() {
     document.querySelectorAll('.bubble, .fire').forEach(element => element.remove());
     menu.style.display = 'block';
+    bubbleScore=0;
 }
+
+document.body.addEventListener('click', (e) => {
+    if (e.target.classList.contains('bubble')) {
+        e.target.remove();
+        bubbleScore++;
+        document.getElementById('bubbleScore').textContent = bubbleScore;
+
+        // End game if all bubbles are popped early
+        if (bubbleScore == 20) {
+            endGame();
+            bubbleScore == 0;
+        }
+    }
+});
 
 function createBubbles() {
     for (let i = 0; i < 20; i++) {
@@ -92,16 +107,5 @@ function createBubbles() {
         document.body.appendChild(bubble);
     }
 
-    document.body.addEventListener('click', (e) => {
-        if (e.target.classList.contains('bubble')) {
-            e.target.remove();
-            bubbleScore++;
-            document.getElementById('bubbleScore').textContent = bubbleScore;
-
-            // End game if all bubbles are popped early
-            if (bubbleScore === 20) {
-                endGame();
-            }
-        }
-    });
+    
 }
