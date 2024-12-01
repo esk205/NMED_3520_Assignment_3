@@ -148,7 +148,14 @@ function resetGame() {
 
 document.body.addEventListener('click', (e) => {
     if (e.target.classList.contains('bubble')) {
-        e.target.remove();
+        // Add the explode animation class
+        e.target.style.animation = 'explode 0.5s forwards';
+
+        // Wait for the animation to complete before removing the element
+        setTimeout(() => {
+            e.target.remove();
+        }, 500);
+
         bubbleScore++;
         document.getElementById('bubbleScore').textContent = bubbleScore;
 
@@ -162,6 +169,7 @@ document.body.addEventListener('click', (e) => {
         document.getElementById('bubbleScore').textContent = bubbleScore;
     }
 });
+
 
 
 function createBubbles() {

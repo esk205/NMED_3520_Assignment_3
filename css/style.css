@@ -12,7 +12,6 @@ h1 {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-
 .bubble, .fire {
     position: absolute;
     border-radius: 50%;
@@ -21,11 +20,15 @@ h1 {
 }
 
 .bubble {
+    position: absolute;
+    border-radius: 50%;
     width: 50px;
     height: 50px;
     background: rgba(255, 255, 255, 0.8);
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
     animation: float 5s infinite ease-in-out;
+    cursor: pointer;
+    user-select: none;
 }
 
 .fire {
@@ -49,6 +52,21 @@ h1 {
     0% { transform: translateY(0); }
     50% { transform: translateY(-50px); }
     100% { transform: translateY(0); }
+}
+
+@keyframes explode {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(3);
+        opacity: 0;
+    }
+}
+@keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
 }
 
 @keyframes flicker {
@@ -109,5 +127,3 @@ h1 {
     color: white;
     display: none;
 }
-
-
