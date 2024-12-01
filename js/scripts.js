@@ -35,20 +35,24 @@ function startCountdown() {
 }
 
 function createFish() {
-    for (let i = 0; i < 5; i++) { // Number of fish
-        const fish = document.createElement('img');
-        fish.classList.add('fish');
-        fish.src = 'imgs/fish.webp'; // Replace with the URL of your fish image
-        fish.alt = 'A swimming fish';
-        fish.style.position = 'absolute';
-        fish.style.top = `${Math.random() * window.innerHeight * 0.8}px`; // Keep fish within visible bounds
-        fish.style.left = Math.random() < 0.5 ? '-100px' : `${window.innerWidth + 100}px`; // Start off-screen
-        fish.dataset.direction = fish.style.left === '-100px' ? 'right' : 'left'; // Save direction as a data attribute
+    for (let i = 0; i < 5; i++) { 
+        const intervalId = setInterval(() => {
+            for (let i = 0; i < 5; i++) { // Number of fish
+                const fish = document.createElement('img');
+                fish.classList.add('fish');
+                fish.src = 'imgs/fish.webp'; // Replace with the URL of your fish image
+                fish.alt = 'A swimming fish';
+                fish.style.position = 'absolute';
+                fish.style.top = `${Math.random() * window.innerHeight * 0.8}px`; // Keep fish within visible bounds
+                fish.style.left = Math.random() < 0.5 ? '-100px' : `${window.innerWidth + 100}px`; // Start off-screen
+                fish.dataset.direction = fish.style.left === '-100px' ? 'right' : 'left'; // Save direction as a data attribute
 
-        fish.style.transform = fish.dataset.direction === 'right' ? 'scaleX(1)' : 'scaleX(-1)'; // Flip fish for direction
-        document.body.appendChild(fish);
+                fish.style.transform = fish.dataset.direction === 'right' ? 'scaleX(1)' : 'scaleX(-1)'; // Flip fish for direction
+                document.body.appendChild(fish);
 
-        animateFish(fish);
+                animateFish(fish);
+            }
+        }, 1000);
     }
 }
 
