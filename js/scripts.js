@@ -34,11 +34,57 @@ function startCountdown() {
     }, 1000);
 }
 
+function createFish() {
+    for (let i = 0; i < 5; i++) { // Number of fish
+        const fish = document.createElement('img');
+        fish.classList.add('fish');
+        fish.src = 'imgs/fish.webp'; // Replace with the URL of your fish image
+        fish.alt = 'A swimming fish';
+        fish.style.position = 'absolute';
+        fish.style.top = `${Math.random() * window.innerHeight * 0.8}px`; // Keep fish within visible bounds
+        fish.style.left = Math.random() < 0.5 ? '-100px' : `${window.innerWidth + 100}px`; // Start off-screen
+        fish.dataset.direction = fish.style.left === '-100px' ? 'right' : 'left'; // Save direction as a data attribute
+
+        fish.style.transform = fish.dataset.direction === 'right' ? 'scaleX(1)' : 'scaleX(-1)'; // Flip fish for direction
+        document.body.appendChild(fish);
+
+        animateFish(fish);
+    }
+}
+
+function animateFish(fish) {
+    const direction = fish.dataset.direction;
+    const startPos = parseInt(fish.style.left, 10);
+    const endPos = direction === 'right' ? window.innerWidth + 100 : -100;
+
+    const duration = 5000 + Math.random() * 5000; // Random duration between 5-10 seconds
+
+    // Animate fish
+    const startTime = performance.now();
+
+    function moveFish(currentTime) {
+        const elapsedTime = currentTime - startTime;
+        const progress = Math.min(elapsedTime / duration, 1); // Cap progress at 1
+        const currentPos = startPos + progress * (endPos - startPos);
+
+        fish.style.left = `${currentPos}px`;
+
+        if (progress < 1) {
+            requestAnimationFrame(moveFish); // Continue animation
+        } else {
+            fish.remove(); // Remove fish when animation is complete
+        }
+    }
+
+    requestAnimationFrame(moveFish);
+}
+
 function startGame() {
     bubbleScore = 0; // Reset score
     document.getElementById('bubbleScore').textContent = bubbleScore;
     scoreboard.style.display = 'block';
     createBubbles();
+    createFish(); // Add fish at the start of the game
     startTime = Date.now();
 
     let timeLeft = 30;
@@ -53,6 +99,7 @@ function startGame() {
         }
     }, 1000);
 }
+
 
 function endGame() {
     clearInterval(timerInterval);
@@ -93,10 +140,14 @@ document.body.addEventListener('click', (e) => {
         // End game if all bubbles are popped early
         if (bubbleScore == 20) {
             endGame();
-            bubbleScore == 0;
         }
+    } else if (e.target.classList.contains('fish')) {
+        e.target.remove();
+        bubbleScore--;
+        document.getElementById('bubbleScore').textContent = bubbleScore;
     }
 });
+
 
 function createBubbles() {
     for (let i = 0; i < 20; i++) {
@@ -105,7 +156,16 @@ function createBubbles() {
         bubble.style.top = `${Math.random() * window.innerHeight}px`;
         bubble.style.left = `${Math.random() * window.innerWidth}px`;
         document.body.appendChild(bubble);
-    }
-
-    
+    }  
 }
+// Add CSS styles for fish images
+const style = document.createElement('style');
+style.textContent = `
+    .fish {
+        width: 50px; /* Adjust size as needed */
+        height: auto; /* Maintain aspect ratio */
+        pointer-events: all; /* Ensure fish are clickable */
+        transition: none; /* Disable CSS transitions for JS animations */
+    }
+`;
+document.head.appendChild(style);
