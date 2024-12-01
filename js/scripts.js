@@ -61,11 +61,12 @@ function createFish() {
     }
 }
 
-
 function animateFish(fish) {
     const direction = fish.dataset.direction;
-    const startPos = parseInt(fish.style.left, 10);
-    const endPos = direction === 'right' ? window.innerWidth + 100 : -100;
+
+    // Reverse the direction logic
+    const startPos = direction === 'right' ? window.innerWidth + 100 : -100;
+    const endPos = direction === 'right' ? -100 : window.innerWidth + 100;
 
     const duration = 5000 + Math.random() * 5000; // Random duration between 5-10 seconds
 
@@ -85,7 +86,6 @@ function animateFish(fish) {
             fish.remove(); // Remove fish when animation is complete
         }
     }
-
     requestAnimationFrame(moveFish);
 }
 
