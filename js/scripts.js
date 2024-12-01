@@ -1,6 +1,7 @@
 let bubbleScore = 0;
 let timerInterval = 0;
 let startTime = 0;
+let fishIntervals = []; // Array to store interval IDs
 
 const menu = document.getElementById('menu');
 const playButton = document.getElementById('playButton');
@@ -35,9 +36,10 @@ function startCountdown() {
 }
 
 function createFish() {
-    for (let i = 0; i < 5; i++) { 
+    // Create fish in intervals
+    for (let j = 0; j < 5; j++) { 
         const intervalId = setInterval(() => {
-            for (let i = 0; i < 5; i++) { // Number of fish
+            for (let i = 0; i < 5; i++) { // Number of fish per interval
                 const fish = document.createElement('img');
                 fish.classList.add('fish');
                 fish.src = 'imgs/fish.webp'; // Replace with the URL of your fish image
@@ -53,8 +55,12 @@ function createFish() {
                 animateFish(fish);
             }
         }, 1000);
+
+        // Store interval ID to manage later
+        fishIntervals.push(intervalId);
     }
 }
+
 
 function animateFish(fish) {
     const direction = fish.dataset.direction;
@@ -106,11 +112,16 @@ function startGame() {
 
 
 function endGame() {
+    // Clear all intervals to stop fish creation
+    fishIntervals.forEach(intervalId => clearInterval(intervalId));
+    fishIntervals = []; // Reset the intervals array
+
     clearInterval(timerInterval);
     scoreboard.style.display = 'none';
-    const timeTaken = Math.floor((Date.now() - startTime) / 1000);
 
+    const timeTaken = Math.floor((Date.now() - startTime) / 1000);
     let trophy;
+
     if (bubbleScore === 20) {
         if (timeTaken <= 15) {
             trophy = 'Gold';
