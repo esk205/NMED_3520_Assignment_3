@@ -2,8 +2,6 @@ let bubbleScore = 0;
 let timerInterval = 0;
 let startTime = 0;
 let fishIntervals = []; // Array to store interval IDs
-let bubbleMenuInterval;
-let gameEnded = false; // Flag to prevent multiple endGame calls
 
 const menu = document.getElementById('menu');
 const playButton = document.getElementById('playButton');
@@ -11,57 +9,6 @@ const howToPlayButton = document.getElementById('howToPlayButton');
 const instructions = document.getElementById('instructions');
 const scoreboard = document.getElementById('scoreboard');
 const countdown = document.getElementById('countdown');
-
-// Function to create and animate bubbles in the menu
-function createMenuBubbles() {
-    const bubble = document.createElement('div');
-    bubble.classList.add('menu-bubble');
-    bubble.style.left = `${Math.random() * window.innerWidth}px`;
-    bubble.style.animationDuration = `${2 + Math.random() * 3}s`; // Random animation speed
-    bubble.style.width = bubble.style.height = `${10 + Math.random() * 30}px`; // Random bubble size
-    document.body.appendChild(bubble);
-
-    bubble.addEventListener('animationend', () => bubble.remove());
-}
-
-function startMenuBubbles() {
-    bubbleMenuInterval = setInterval(createMenuBubbles, 300);
-}
-
-function stopMenuBubbles() {
-    clearInterval(bubbleMenuInterval);
-    document.querySelectorAll('.menu-bubble').forEach(bubble => bubble.remove());
-}
-
-// Event listeners for menu interactions
-playButton.addEventListener('click', () => {
-    menu.style.display = 'none';
-    stopMenuBubbles(); // Stop bubbles when the game starts
-    startCountdown();
-});
-
-// CSS styles for menu bubbles
-const bubbleStyle = document.createElement('style');
-bubbleStyle.textContent = `
-    .menu-bubble {
-        position: absolute;
-        bottom: -50px; /* Start below the screen */
-        background: rgba(135, 206, 235, 0.7); /* Light blue bubbles */
-        border-radius: 50%;
-        animation: rise 5s linear infinite;
-        pointer-events: none; /* Disable interaction */
-    }
-    @keyframes rise {
-        to {
-            transform: translateY(-110vh); /* Move upwards */
-        }
-    }
-`;
-document.head.appendChild(bubbleStyle);
-
-// Start bubbles when the menu is visible
-menu.style.display = 'block';
-startMenuBubbles();
 
 playButton.addEventListener('click', () => {
     menu.style.display = 'none';
@@ -143,7 +90,6 @@ function animateFish(fish) {
 }
 
 function startGame() {
-    gameEnded = false; // Reset game state
     bubbleScore = 0; // Reset score
     document.getElementById('bubbleScore').textContent = bubbleScore;
     scoreboard.style.display = 'block';
@@ -164,10 +110,8 @@ function startGame() {
     }, 1000);
 }
 
-function endGame() {
-    if (gameEnded) return; // Prevent multiple calls
-    gameEnded = true;
 
+function endGame() {
     // Clear all intervals to stop fish creation
     fishIntervals.forEach(intervalId => clearInterval(intervalId));
     fishIntervals = []; // Reset the intervals array
@@ -199,7 +143,7 @@ function endGame() {
 function resetGame() {
     document.querySelectorAll('.bubble, .fire').forEach(element => element.remove());
     menu.style.display = 'block';
-    bubbleScore = 0;
+    bubbleScore=0;
 }
 
 document.body.addEventListener('click', (e) => {
@@ -225,6 +169,8 @@ document.body.addEventListener('click', (e) => {
         document.getElementById('bubbleScore').textContent = bubbleScore;
     }
 });
+
+
 
 function createBubbles() {
     for (let i = 0; i < 20; i++) {
