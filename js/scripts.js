@@ -3,6 +3,7 @@ let timerInterval = 0;
 let startTime = 0;
 let fishIntervals = []; // Array to store interval IDs
 let bubbleMenuInterval;
+let gameEnded = false; // Flag to prevent multiple endGame calls
 
 const menu = document.getElementById('menu');
 const playButton = document.getElementById('playButton');
@@ -142,6 +143,7 @@ function animateFish(fish) {
 }
 
 function startGame() {
+    gameEnded = false; // Reset game state
     bubbleScore = 0; // Reset score
     document.getElementById('bubbleScore').textContent = bubbleScore;
     scoreboard.style.display = 'block';
@@ -163,6 +165,9 @@ function startGame() {
 }
 
 function endGame() {
+    if (gameEnded) return; // Prevent multiple calls
+    gameEnded = true;
+
     // Clear all intervals to stop fish creation
     fishIntervals.forEach(intervalId => clearInterval(intervalId));
     fishIntervals = []; // Reset the intervals array
@@ -194,7 +199,7 @@ function endGame() {
 function resetGame() {
     document.querySelectorAll('.bubble, .fire').forEach(element => element.remove());
     menu.style.display = 'block';
-    bubbleScore=0;
+    bubbleScore = 0;
 }
 
 document.body.addEventListener('click', (e) => {
