@@ -203,7 +203,7 @@ document.body.addEventListener('click', (e) => {
 });
 
 function createBubbles() {
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 40; i++) {
         const bubble = document.createElement('div');
         bubble.classList.add('bubble');
         bubble.style.top = `${Math.random() * window.innerHeight}px`;
