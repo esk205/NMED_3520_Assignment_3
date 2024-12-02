@@ -12,6 +12,7 @@ const countdown = document.getElementById('countdown');
 
 // Create an audio element for the bubble pop sound effect
 const bubblePopSound = new Audio('audio/bubble_pop.mp3'); // Replace with the path to your sound file
+const fishClickSound = new Audio('audio/fish_click.mp3'); // Replace with the path to your fish click sound file
 
 playButton.addEventListener('click', () => {
     menu.style.display = 'none';
@@ -170,6 +171,10 @@ document.body.addEventListener('click', (e) => {
             endGame();
         }
     } else if (e.target.classList.contains('fish')) {
+        // Play the fish click sound
+        fishClickSound.play();
+
+        // Remove the fish element when clicked
         e.target.remove();
         bubbleScore--;
         document.getElementById('bubbleScore').textContent = bubbleScore;
