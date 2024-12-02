@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bubble Pop Challenge!</title>
+    <title>Interactive Bubbles and Fires</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -16,11 +16,25 @@
         <h1>Bubble Pop Challenge</h1>
         <button id="playButton">Play</button>
         <button id="howToPlayButton">How to Play</button>
+        <button id="creditsButton">Credits</button> <!-- Added the new button -->
         <p id="instructions" style="display:none;">Click as many bubbles as you can in 30 seconds!</p>
+        <!-- Hidden text for credits -->
+        <p id="creditsText" style="display:none;">Sound effects Credit for bubbles: https://www.youtube.com/watch?v=Ge2zHoXskC8 <br>  <br>Sound effect for fish: https://www.youtube.com/watch?v=ls2sdHWIDcU <br> <br> Fish image is created by ChatGPT</p>
     </div>
 
     <div id="countdown"></div>
 
     <script src="js/scripts.js"></script>
+    <script>
+        // JavaScript to handle the click event
+        document.getElementById('creditsButton').addEventListener('click', function() {
+            var creditsText = document.getElementById('creditsText');
+            if (creditsText.style.display === 'none') {
+                creditsText.style.display = 'block'; // Show the credits text
+            } else {
+                creditsText.style.display = 'none'; // Hide the credits text if already visible
+            }
+        });
+    </script>
 </body>
 </html>
