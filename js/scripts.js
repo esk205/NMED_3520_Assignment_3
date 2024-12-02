@@ -155,7 +155,7 @@ function endGame() {
     }
 
     const message = trophy
-        ? `Congratulations! You won a ${trophy} trophy by popping all bubbles in ${timeTaken} seconds!`
+        ? `Congratulations! You won a ${trophy} trophy by popping 20 bubbles in ${timeTaken} seconds!`
         : `Game over! You popped ${bubbleScore} bubbles.`;
 
     alert(message);
