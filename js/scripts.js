@@ -19,6 +19,22 @@ playButton.addEventListener('click', () => {
     startCountdown();
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+    createMenuBubbles();
+});
+
+function createMenuBubbles() {
+    for (let i = 0; i < 50; i++) { // Increased number of bubbles to 50
+        const bubble = document.createElement('div');
+        bubble.classList.add('menu-bubble');
+        bubble.style.top = `${Math.random() * window.innerHeight}px`;
+        bubble.style.left = `${Math.random() * window.innerWidth}px`;
+        document.body.appendChild(bubble);
+    }
+}
+
+
+
 howToPlayButton.addEventListener('click', () => {
     instructions.style.display = instructions.style.display === 'none' ? 'block' : 'none';
 });
@@ -101,6 +117,9 @@ function startGame() {
     createFish(); // Add fish at the start of the game
     startTime = Date.now();
 
+    // Hide menu bubbles when the game starts
+    document.querySelectorAll('.menu-bubble').forEach(bubble => bubble.style.display = 'none');
+
     let timeLeft = 30;
     document.getElementById('timer').textContent = timeLeft;
 
@@ -113,7 +132,6 @@ function startGame() {
         }
     }, 1000);
 }
-
 
 function endGame() {
     // Clear all intervals to stop fish creation
@@ -147,7 +165,10 @@ function endGame() {
 function resetGame() {
     document.querySelectorAll('.bubble, .fire').forEach(element => element.remove());
     menu.style.display = 'block';
-    bubbleScore=0;
+    bubbleScore = 0;
+
+    // Show menu bubbles when the game ends
+    createMenuBubbles(); // Ensure bubbles are created when the menu is displayed
 }
 
 document.body.addEventListener('click', (e) => {
@@ -188,16 +209,34 @@ function createBubbles() {
         bubble.style.top = `${Math.random() * window.innerHeight}px`;
         bubble.style.left = `${Math.random() * window.innerWidth}px`;
         document.body.appendChild(bubble);
-    }  
+    }
 }
-// Add CSS styles for fish images
+
+// Add CSS styles for fish images, menu bubbles, and the background color
 const style = document.createElement('style');
 style.textContent = `
+    body {
+        background-color: #003366; /* Dark blue color */
+    }
     .fish {
         width: 50px; /* Adjust size as needed */
         height: auto; /* Maintain aspect ratio */
         pointer-events: all; /* Ensure fish are clickable */
         transition: none; /* Disable CSS transitions for JS animations */
+    }
+    .menu-bubble {
+        width: 30px; /* Size of the decorative bubble */
+        height: 30px; /* Size of the decorative bubble */
+        background-color: rgba(173, 216, 230, 0.6); /* Light blue color */
+        border-radius: 50%; /* Make it circular */
+        position: absolute;
+        pointer-events: none; /* Allow clicking through */
+        box-shadow: 0 0 10px rgba(173, 216, 230, 0.7); /* Add glow effect */
+    }
+    @keyframes float {
+        0% { transform: translateY(0); opacity: 1; }
+        50% { transform: translateY(-20px); opacity: 0.7; }
+        100% { transform: translateY(0); opacity: 1; }
     }
 `;
 document.head.appendChild(style);

@@ -127,3 +127,25 @@ h1 {
     color: white;
     display: none;
 }
+
+.menu-bubble {
+    width: 30px;
+    height: 30px;
+    background-color: rgba(0, 150, 255, 1); /* 100% opacity *
+
+    border-radius: 50%; /* Makes the bubble circular */
+    position: absolute;
+    animation: bubbleAnimation 15s infinite; /* Slower animation duration */
+}
+
+
+@keyframes bubbleAnimation {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-400px) scale(1.5);
+        opacity: 0;
+    }
+}
