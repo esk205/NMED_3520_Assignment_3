@@ -10,6 +10,9 @@ const instructions = document.getElementById('instructions');
 const scoreboard = document.getElementById('scoreboard');
 const countdown = document.getElementById('countdown');
 
+// Create an audio element for the bubble pop sound effect
+const bubblePopSound = new Audio('audio/bubble_pop.mp3'); // Replace with the path to your sound file
+
 playButton.addEventListener('click', () => {
     menu.style.display = 'none';
     startCountdown();
@@ -148,6 +151,9 @@ function resetGame() {
 
 document.body.addEventListener('click', (e) => {
     if (e.target.classList.contains('bubble')) {
+        // Play the bubble pop sound
+        bubblePopSound.play();
+
         // Add the explode animation class
         e.target.style.animation = 'explode 0.5s forwards';
 
@@ -169,8 +175,6 @@ document.body.addEventListener('click', (e) => {
         document.getElementById('bubbleScore').textContent = bubbleScore;
     }
 });
-
-
 
 function createBubbles() {
     for (let i = 0; i < 20; i++) {
